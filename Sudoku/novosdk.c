@@ -17,47 +17,53 @@ void Zerar_matriz(int m[TAMANHO][TAMANHO]){              // M: n=9
 }
 
 int Verificar(int Sudoku[TAMANHO][TAMANHO]){
-    int i, j, teste_i, teste_j, ti, tj;
-    for(i=0; i<TAMANHO; i++){
-        for(j=0; j<TAMANHO; j++){
-            // D: Essa parte testa os se os elemntos dos quadrados 3x3 são iguais
-            if(i%3 == 0 && j%3 == 0){
-                teste_i = i;
-                teste_j = j;
-                ti = teste_i;
-                tj = teste_j;
-                for(; teste_i<i+3; teste_i++)
-                    for(; teste_j<j+3; teste_j++)
-                        for(; ti<i+3; ti++)
-                            for(; tj<j+3; tj++){
-                                if(ti != teste_i || tj != teste_j){
-                                    if(Sudoku[ti][tj] == Sudoku[teste_i][teste_j])
-                                        return 0;
-                                    else continue;
-                                }
-                            }
-            }
-            // D: Esse parte testa se os elementos nas mesmas linhas são iguais
-            if(i == 0){    
-                for(teste_i=0; teste_i<TAMANHO; teste_i++)
-                    for(ti=teste_i+1; ti<TAMANHO; ti++){
-                        if(Sudoku[ti][j] == Sudoku[teste_i][j])
-                            return 0;
-                        else continue;
-                    }
-            }
-            // D: Essa parte testa se os elementos em uma mesma coluna são iguais
-            if(j == 0){
-                for(teste_j=0; teste_j<TAMANHO; teste_j++)
-                    for(tj=teste_j+1; tj<TAMANHO; tj++){
-                        if(Sudoku[i][tj] == Sudoku[i][teste_j])
-                            return 0;
-                        else continue;
-                    }
-            }
+         int i, j, teste_i, teste_j, ti, tj;
+        for(i=0; i<TAMANHO; i++){
+                for(j=0; j<TAMANHO; j++){
+                        // D: Essa parte testa os se os elemntos dos quadrados 3x3 são iguais
+                        if(i%3 == 0 && j%3 == 0){
+                                teste_i = i;
+                                teste_j = j;
+                                ti = teste_i;
+                                tj = teste_j;
+                                for(; teste_i<i+3; teste_i++)
+                                        for(; teste_j<j+3; teste_j++)
+                                                for(; ti<i+3; ti++)
+                                                        for(; tj<j+3; tj++){
+                                                                if(ti != teste_i || tj != teste_j){
+                                                                        if(Sudoku[ti][tj] != 0 && Sudoku[teste_i][teste_j] != 0){
+                                                                                if(Sudoku[ti][tj] == Sudoku[teste_i][teste_j])
+                                                                                        return 0;
+                                                                                else continue;
+                                                                        }else continue;
+                                                                }
+                                                        }
+                        }
+                        // D: Esse parte testa se os elementos nas mesmas linhas são iguais
+                        if(i == 0){    
+                                for(teste_i=0; teste_i<TAMANHO; teste_i++)
+                                        for(ti=teste_i+1; ti<TAMANHO; ti++){
+                                                if(Sudoku[ti][j] != 0 && Sudoku[teste_i][j] != 0){
+                                                        if(Sudoku[ti][j] == Sudoku[teste_i][j])
+                                                                return 0;
+                                                        else continue;
+                                                }else continue;
+                                        }
+                        }
+                        // D: Essa parte testa se os elementos em uma mesma coluna são iguais
+                        if(j == 0){
+                                for(teste_j=0; teste_j<TAMANHO; teste_j++)
+                                        for(tj=teste_j+1; tj<TAMANHO; tj++){
+                                                if(Sudoku[i][tj] != 0 && Sudoku[i][teste_j] != 0){
+                                                        if(Sudoku[i][tj] == Sudoku[i][teste_j])
+                                                                return 0;
+                                                        else continue;
+                                                } else continue;
+                                        }
+                        }
+                }
         }
-    }
-    return 1;
+        return 1;
 }
 
 int Pronto(int m[TAMANHO][TAMANHO]){
