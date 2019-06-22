@@ -255,6 +255,84 @@ void Gera_jogo_aleatorio(int matriz_original[TAMANHO][TAMANHO], int matriz_final
         fclose(p);
 }
 
+void Ranking(){
+    FILE *p;
+    char tempo_e_nome[500];
+    int i;
+    printf( "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c\n"
+        ,201,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,187);
+    p = fopen("temposfacil.txt","r");
+    if(p == NULL){
+        printf("O arquivo nao foi aberto como desejado");
+        exit(1);
+    }
+    printf("%c\tTempos Facil:\t\t\t\t\t%c\n",186,186);
+    for(i=0; i<3; i++){
+        fgets(tempo_e_nome, 500, p);
+        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
+        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    }
+    fclose(p);
+    p = fopen("temposmedio.txt","r");
+    if(p == NULL){
+        printf("O arquivo nao foi aberto como desejado");
+        exit(1);
+    }
+    printf("%c\tTempos Medio:\t\t\t\t\t%c\n",186,186);
+    for(i=0; i<3; i++){
+        fgets(tempo_e_nome, 500, p);
+        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
+        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    }
+    fclose(p);
+    p = fopen("temposdificil.txt","r");
+    if(p == NULL){
+        printf("O arquivo nao foi aberto como desejado");
+        exit(1);
+    }
+    printf("%c\tTempos Dificil:\t\t\t\t\t%c\n",186,186);
+    for(i=0; i<3; i++){
+        fgets(tempo_e_nome, 500, p);
+        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
+        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    }
+    fclose(p);
+    p = fopen("temposterrivel.txt","r");
+    if(p == NULL){
+        printf("O arquivo nao foi aberto como desejado");
+        exit(1);
+    }
+    printf("%c\tTempos Terrivel:\t\t\t\t%c\n",186,186);
+    for(i=0; i<3; i++){
+        fgets(tempo_e_nome, 500, p);
+        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
+        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    }
+    fclose(p);
+    printf( "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c%c%c%c"
+        "%c%c%c%c%c%c%c\n"
+        ,200,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,205,205,205,205
+        ,205,205,205,205,205,205,188);
+}
+
 void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
         int escolha;
         system("cls");
@@ -274,7 +352,8 @@ void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANH
 
         printf( "%c    Digite: \t\t\t\t\t\t%c\n",186,186);
         printf( "%c    (1)Para carregar um jogo aleat%crio.\t\t%c \n"
-                "%c    (2)Para carregar um jogo previamente definido.\t%c \n",186,162,186,186,186);
+                "%c    (2)Para carregar um jogo previamente definido.\t%c \n"
+                "%c    (3)Ranking\t\t\t\t\t\t%c\n",186,162,186,186,186,186,186);
 
         printf( "%c%c%c%c%c%c%c%c%c%c"
                 "%c%c%c%c%c%c%c%c%c%c"
@@ -298,8 +377,10 @@ void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANH
 
         //}else if(escolha == 2){
                // carregaJogoPreviamenteDefinido();
-        }else{                  // M: se digitar 3 tbm, n alterei pq povavelmente mudaremos para as setinhas
+        }else if(escolha == 2){                  // M: se digitar 3 tbm, n alterei pq povavelmente mudaremos para as setinhas
                 Meu_sudoku(matriz_original, matriz_final); // M: estava->telaDeBoasVindas(matriz_original,matriz_final);
+        }else{
+                Ranking();
         }
 }
 
