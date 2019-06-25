@@ -16,6 +16,21 @@ void Zerar_matriz(int m[TAMANHO][TAMANHO]){              // M: n=9
                         m[i][j] = 0;
 }
 
+void Informacao_vazia(char informacao[45]){
+    int i;
+    for(i=0; i<44 ; i++)
+        informacao[i]=' ';
+}
+
+int Pronto(int m[TAMANHO][TAMANHO]){
+        int i, j;
+        for(i=0; i<TAMANHO; i++)
+                for(j=0; j<TAMANHO; j++)
+                        if(m[i][j] == 0)
+                                return 0;
+        return 1;         
+}
+
 int Verificar(int Sudoku[TAMANHO][TAMANHO]){
          int i, j, teste_i, teste_j, ti, tj;
         for(i=0; i<TAMANHO; i++){
@@ -66,16 +81,8 @@ int Verificar(int Sudoku[TAMANHO][TAMANHO]){
         return 1;
 }
 
-int Pronto(int m[TAMANHO][TAMANHO]){
-        int i, j;
-        for(i=0; i<TAMANHO; i++)
-                for(j=0; j<TAMANHO; j++)
-                        if(m[i][j] == 0)
-                                return 0;
-        return 1;         
-}
 
-void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy){
+void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char informacao[45]){
         int i, j;
         system("cls");
 
@@ -97,26 +104,27 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy){
                         if(j == 8)                              // M: último caracter das linhas que têm numeros (igual ao 1°)
                                 printf("%c",186);
                 }
-
+                if(i == 5)
+                    printf("\t\tDigite \"v\" para verificar");
+                if(i == 6)
+                    printf("\tOBS: SE ISSO ACONTECER ^^ E O SUDOKU ESTIVER COMPLETO, SAI DO LACO WHILE");
+                if(i ==7)
+                    printf("\t\t%s",informacao);       //M: Vai digitar alguma informação especial
                 if(i == 2 || i == 5)                            // M: Ao final da 3° linha e da 5°, irá mostar esta linha "divisão horizontal"
                 printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",204,196,196,196,196,196,196,196,197,196,196,196,196,196,196,196,197,196,196,196,196,196,196,196,185);
         }
 
         printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",200,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,188); 
-
-        if(Pronto(m) == 1){
-                if(Verificar(m) == 1)
-                        printf("Parabens meu jovem\n");         // M: Depois, colocar esses valores em uma string para imprimir ao lado do tabuleiro, junto com outras informaçoes
-                else
-                        printf("Voce falhou\n");
-        }
 }
 
-void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO]){             
+void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45]){             
         int atualx = 0, atualy = 0;
         unsigned char tecla;
-        Imprime_tabuleiro(m, 0, 0);
+        Informacao_vazia(informacao);
+        Imprime_tabuleiro(m, 0, 0, informacao);
         while((tecla=getch()) != 13){         // M: 27=espaço     13=enter
+
+        Informacao_vazia(informacao);
  
         system("cls");                      // M: Ver como é no linux     #if...
         
@@ -129,13 +137,25 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO]){
                 m[atualy][atualx] = tecla-48;               // M: Colocar na matriz de numeros inteiros
         if(tecla == 8 && m_teste[atualy][atualx] == 0)  // M: Acrescentei isso, se o usuario der back-space apaga o numero
                 m[atualy][atualx] = 0;
-        
+
+        if(tecla == 118){
+            if(Verificar(m) == 1){
+                strcpy(informacao,"Parabens! Voce manja :p haha");
+                if(Pronto(m) == 1){
+                        printf("\n\n\n******PARABENS***\n");
+                        break;
+                }
+            }
+            else
+                strcpy(informacao,"Voce fracassou.. quem sabe na proxima");   
+        }         
+                
         if(atualx == -1) atualx=8;       // M: Quando o elemento selecionado passa do limite (linha ou coluna), ele "faz a volta"
         if(atualx == 9)  atualx=0;
         if(atualy == -1) atualy=8;
         if(atualy == 9)  atualy=0;
 
-        Imprime_tabuleiro(m, atualx, atualy);    // M: Passa a matriz, numero de elementos e a posição que pode ser modificada
+        Imprime_tabuleiro(m, atualx, atualy, informacao);    // M: Passa a matriz, numero de elementos e a posição que pode ser modificada
     }
     /*if (tecla==13)
         printf("Jogo pausado");              M: Talvez dê para inventar coisa aqui tipo isso ;)*/
@@ -143,20 +163,24 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO]){
 
 void Meu_sudoku(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){  // M: Para o usuario digitar seu sudoku
         int i, j;
+        char informacao[45];
+        Informacao_vazia(informacao);
         Zerar_matriz(matriz_original);
         Zerar_matriz(matriz_final);        
-        Imprime_tabuleiro(matriz_original, 0, 0);
-        Preencher_matriz(matriz_original, matriz_final);             
+        Imprime_tabuleiro(matriz_original, 0, 0, informacao);
+        Preencher_matriz(matriz_original, matriz_final, informacao);             
 
         for(i=0; i<TAMANHO; i++)
                 for(j=0; j<TAMANHO; j++)
                         matriz_final[i][j] = matriz_original[i][j];
 
-        Preencher_matriz(matriz_final, matriz_original);
+        Preencher_matriz(matriz_final, matriz_original, informacao);
 }
 
 void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
         int i, j, x = 0;
+        char informacao[45];
+        Informacao_vazia(informacao);
         for(i=0; i<TAMANHO; i++)
                 for(j=0; j<TAMANHO; j++,x++)
                         matriz_original[i][j] = vetor[x]-48; 
@@ -166,7 +190,7 @@ void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int
                 for(j=0; j<TAMANHO; j++)
                         matriz_final[i][j] = matriz_original[i][j];
         
-        Preencher_matriz(matriz_final, matriz_original); 
+        Preencher_matriz(matriz_final, matriz_original, informacao); 
 }
 
 void Gera_jogo_aleatorio(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
