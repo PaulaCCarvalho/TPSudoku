@@ -561,6 +561,20 @@ void Ranking(){
         printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
+    p = fopen("temposMeuSudoku.txt","r");
+    if(p == NULL){
+        printf("O arquivo nao foi aberto como desejado");
+        exit(1);
+    }
+    printf("%c\tTempos Meu Sudoku:\t\t\t\t%c\n",186,186);
+        for(i=0; i<3; i++){
+        fgets(tempostr, 20, p);
+        fgets(nome, 100, p);
+        nome[strlen(nome) - 1] = '\0';
+        tempo = atoi(tempostr);
+        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
+    }
+    fclose(p);
     printf( "%c%c%c%c%c%c%c%c%c%c"
         "%c%c%c%c%c%c%c%c%c%c"
         "%c%c%c%c%c%c%c%c%c%c"
