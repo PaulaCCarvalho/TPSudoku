@@ -124,11 +124,176 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
         printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",200,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,188); 
 }
 
-void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45], int opcoes){             
-        int atualx = 0, atualy = 0, selecaolateral = 0;
+void Controla_tempo(int tempo, int escolha){
+        FILE *p;
+        int aux_tempo_01, aux_tempo_02,aux_tempo_03;
+        char aux_tempostr_01[20], aux_tempostr_02[20], aux_tempostr_03[20], nome01[100], nome02[100], nome03[100], nome_usuario[100];
+        printf("/nO seu tempo foi de:\t %i:%i\n", tempo / 60, tempo % 60);
+        switch(escolha){
+                        case 1:
+                                p = fopen("temposfacil.txt", "r");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                        }
+                                break;
+                        case 2:
+                                p = fopen("temposmedio.txt", "r");
+                                if(p == NULL){
+
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                }
+                                break;
+                        case 3:
+                                p = fopen("temposdificil.txt", "r");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                }
+                                break;
+                        case 4:
+                                p = fopen("temposterrivel.txt", "r");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                }
+                                break;
+                        case 0:
+                                p = fopen("temposMeuSudoku.txt", "r");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempos\n");
+                                        exit(1);
+                                }
+                                break;
+                }
+                fgets(aux_tempostr_01, 20, p);
+                fgets(nome01, 100, p);
+                fgets(aux_tempostr_02, 20, p);
+                fgets(nome02, 100, p);
+                fgets(aux_tempostr_03, 20, p);
+                fgets(nome03, 100, p);
+                aux_tempo_01 = atoi(aux_tempostr_01);
+                aux_tempo_02 = atoi(aux_tempostr_02);
+                aux_tempo_03 = atoi(aux_tempostr_03);
+                fclose(p);
+                printf("Entre com o seu nome:");
+                setbuf(stdin, NULL);
+                fgets(nome_usuario, 100, stdin);
+                switch(escolha){
+                        case 1:
+                                p = fopen("temposfacil.txt", "w");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                        }
+                                break;
+                        case 2:
+                                p = fopen("temposmedio.txt", "w");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                }
+                                break;
+                        case 3:
+                                p = fopen("temposdificil.txt", "w");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                }
+                                break;
+                        case 4:
+                                p = fopen("temposterrivel.txt", "w");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempo\n");
+                                        exit(1);
+                                }
+                                break;
+                        case 0:
+                                p = fopen("temposMeuSudoku.txt", "w");
+                                if(p == NULL){
+                                        printf("Erro ao abrir arquivo de tempos\n");
+                                        exit(1);
+                                }
+                }
+
+                if (aux_tempo_01 == 0){
+                        aux_tempo_01 = tempo;
+                        strcpy(nome01, nome_usuario);
+                }
+                else if(aux_tempo_02 == 0){
+                        if(tempo < aux_tempo_01){
+                                aux_tempo_02 = aux_tempo_01;
+                                strcpy(nome02, nome01);
+                                aux_tempo_01 = tempo;
+                                strcpy(nome01, nome_usuario);
+                        }
+                        else{    
+                                aux_tempo_02 = tempo;
+                                strcpy(nome02, nome_usuario);
+                        }
+                }
+                else if(aux_tempo_03 == 0){
+                        if(tempo < aux_tempo_01){
+                                aux_tempo_03 = aux_tempo_02;
+                                strcpy(nome03, nome02);
+                                aux_tempo_02 = aux_tempo_01;
+                                strcpy(nome02, nome01);
+                                aux_tempo_01 = tempo;
+                                strcpy(nome01, nome_usuario);
+                        }
+                        else if(tempo < aux_tempo_02){
+                                aux_tempo_03 = aux_tempo_02;
+                                strcpy(nome03, nome02);
+                                aux_tempo_02 = tempo;
+                                strcpy(nome02, nome_usuario);
+                        }
+                        else{ 
+                                aux_tempo_03 = tempo;
+                                strcpy(nome03, nome_usuario);
+                        }
+                }
+                else if(tempo < aux_tempo_01){
+                        aux_tempo_03 = aux_tempo_02;
+                        strcpy(nome03, nome02);
+                        aux_tempo_02 = aux_tempo_01;
+                        strcpy(nome02, nome01);
+                        aux_tempo_01 = tempo;
+                        strcpy(nome01, nome_usuario);
+                }
+                else if(tempo < aux_tempo_02){
+                        aux_tempo_03 = aux_tempo_02;
+                        strcpy(nome03, nome02);
+                        aux_tempo_02 = tempo;
+                        strcpy(nome02, nome_usuario);
+                }
+                else if(tempo < aux_tempo_03){
+                        aux_tempo_03 = tempo;
+                        strcpy(nome03, nome_usuario);
+                }
+                else printf("Lamento %s\tMas o seu tempo nao entrou no RANKING\n", nome_usuario);
+                sprintf(aux_tempostr_01, "%i", aux_tempo_01);
+                sprintf(aux_tempostr_02, "%i", aux_tempo_02);
+                sprintf(aux_tempostr_03, "%i", aux_tempo_03);
+                fputs(aux_tempostr_01, p);
+                fputc('\n', p);
+                fputs(nome01, p);
+                fputs(aux_tempostr_02, p);
+                fputc('\n', p);
+                fputs(nome02, p);
+                fputs(aux_tempostr_03, p);
+                fputc('\n', p);
+                fputs(nome03, p);
+                fclose(p);
+}
+
+void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45], int opcoes, int escolha){             
+        int atualx = 0, atualy = 0, selecaolateral = 0, tempo;
         unsigned char tecla;
+        clock_t tempo_gasto;
         Informacao_vazia(informacao);
         Imprime_tabuleiro(m, 0, 0, informacao, opcoes);
+        tempo_gasto = clock();
         while(1){         // M: 27=esc     13=enter
         tecla=getch();
         Informacao_vazia(informacao);
@@ -157,6 +322,9 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
             if(Verificar(m) == 1){
                     strcpy(informacao,"Parabens! Voce manja :p haha");
                     if(Pronto(m) == 1){
+                            tempo_gasto = clock() - tempo_gasto;
+                            tempo = tempo_gasto / CLOCKS_PER_SEC;
+                            Controla_tempo(tempo, escolha);
                             printf("\n\n\n******PARABENS***\n");
                             break;
                     }
@@ -195,16 +363,16 @@ void Meu_sudoku(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
         Zerar_matriz(matriz_original);
         Zerar_matriz(matriz_final);        
         Imprime_tabuleiro(matriz_original, 0, 0, informacao, 0);
-        Preencher_matriz(matriz_original, matriz_final, informacao, 0);             
+        Preencher_matriz(matriz_original, matriz_final, informacao, 0, 0);             
 
         for(i=0; i<TAMANHO; i++)
                 for(j=0; j<TAMANHO; j++)
                         matriz_final[i][j] = matriz_original[i][j];
 
-        Preencher_matriz(matriz_final, matriz_original, informacao, 1);
+        Preencher_matriz(matriz_final, matriz_original, informacao, 1, 0);
 }
 
-void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
+void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO], int escolha){
         int i, j, x = 0;
         char informacao[45];
         Informacao_vazia(informacao);
@@ -217,7 +385,7 @@ void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int
                 for(j=0; j<TAMANHO; j++)
                         matriz_final[i][j] = matriz_original[i][j];
         
-        Preencher_matriz(matriz_final, matriz_original, informacao, 1); 
+        Preencher_matriz(matriz_final, matriz_original, informacao, 1, escolha); 
 }
 
 void Imprime_dificuldades(int escolha){
@@ -317,14 +485,14 @@ void Gera_jogo_aleatorio(int matriz_original[TAMANHO][TAMANHO], int matriz_final
                 if(x == 81)
                         break;
         }
-        Vetor_para_matriz(vetor, matriz_original, matriz_final);
+        Vetor_para_matriz(vetor, matriz_original, matriz_final, escolha);
         fclose(p);
 }
 
 void Ranking(){
     FILE *p;
-    char tempo_e_nome[500];
-    int i;
+    char tempostr[20], nome[100];
+    int i, tempo;
     printf( "%c%c%c%c%c%c%c%c%c%c"
         "%c%c%c%c%c%c%c%c%c%c"
         "%c%c%c%c%c%c%c%c%c%c"
@@ -342,11 +510,13 @@ void Ranking(){
         printf("O arquivo nao foi aberto como desejado");
         exit(1);
     }
-    printf("%c\tTempos Facil:\t\t\t\t\t%c\n",186,186);
+    printf("%c\tTempos F%ccil:\t\t\t\t\t%c\n",186,160,186);
     for(i=0; i<3; i++){
-        fgets(tempo_e_nome, 500, p);
-        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
-        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+        fgets(tempostr, 20, p);
+        fgets(nome, 100, p);
+        nome[strlen(nome) - 1] = '\0';
+        tempo = atoi(tempostr);
+        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposmedio.txt","r");
@@ -354,11 +524,13 @@ void Ranking(){
         printf("O arquivo nao foi aberto como desejado");
         exit(1);
     }
-    printf("%c\tTempos Medio:\t\t\t\t\t%c\n",186,186);
-    for(i=0; i<3; i++){
-        fgets(tempo_e_nome, 500, p);
-        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
-        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    printf("%c\tTempos M%cdio:\t\t\t\t\t%c\n",186,130,186);
+        for(i=0; i<3; i++){
+        fgets(tempostr, 20, p);
+        fgets(nome, 100, p);
+        nome[strlen(nome) - 1] = '\0';
+        tempo = atoi(tempostr);
+        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposdificil.txt","r");
@@ -366,11 +538,13 @@ void Ranking(){
         printf("O arquivo nao foi aberto como desejado");
         exit(1);
     }
-    printf("%c\tTempos Dificil:\t\t\t\t\t%c\n",186,186);
-    for(i=0; i<3; i++){
-        fgets(tempo_e_nome, 500, p);
-        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
-        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    printf("%c\tTempos Dif%ccil:\t\t\t\t\t%c\n",186,161,186);
+        for(i=0; i<3; i++){
+        fgets(tempostr, 20, p);
+        fgets(nome, 100, p);
+        nome[strlen(nome) - 1] = '\0';
+        tempo = atoi(tempostr);
+        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposterrivel.txt","r");
@@ -378,11 +552,13 @@ void Ranking(){
         printf("O arquivo nao foi aberto como desejado");
         exit(1);
     }
-    printf("%c\tTempos Terrivel:\t\t\t\t%c\n",186,186);
-    for(i=0; i<3; i++){
-        fgets(tempo_e_nome, 500, p);
-        tempo_e_nome[strlen(tempo_e_nome) - 1] = '\0';
-        printf("%c\t\t%s\t\t\t\t%c\n",186,tempo_e_nome, 186);
+    printf("%c\tTempos Terr%cvel:\t\t\t\t%c\n",186,161,186);
+        for(i=0; i<3; i++){
+        fgets(tempostr, 20, p);
+        fgets(nome, 100, p);
+        nome[strlen(nome) - 1] = '\0';
+        tempo = atoi(tempostr);
+        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     printf( "%c%c%c%c%c%c%c%c%c%c"
