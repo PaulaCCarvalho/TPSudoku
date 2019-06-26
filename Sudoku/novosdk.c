@@ -82,7 +82,7 @@ int Verificar(int Sudoku[TAMANHO][TAMANHO]){
 }
 
 
-void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char informacao[45]){
+void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char informacao[45], int opcoes){
         int i, j;
         system("cls");
 
@@ -104,8 +104,15 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
                         if(j == 8)                              // M: último caracter das linhas que têm numeros (igual ao 1°)
                                 printf("%c",186);
                 }
-                if(i == 5)
-                    printf("\t\tDigite \"v\" para verificar");
+                /*
+                if(opcoes == 0) quando as opçoes se referem ao preenchimento da matriz original
+                if(opcoes == 1) quando as opçoes se referem ao preenchimento da matriz de jogo
+                */
+                if(i == 1)
+                        printf("\t\t\t%c Verificar (Atalho: v)",(atualx == 9 && atualy == 0)?175:32);
+                if(i == 2)
+                        printf("\t\t\t%c Fim (Atalho: f)",(atualx == 9 && atualy == 1)?175:32);
+                
                 if(i == 6)
                     printf("\tOBS: SE ISSO ACONTECER ^^ E O SUDOKU ESTIVER COMPLETO, SAI DO LACO WHILE");
                 if(i ==7)
@@ -117,13 +124,13 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
         printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",200,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,188); 
 }
 
-void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45]){             
-        int atualx = 0, atualy = 0;
+void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45], int opcoes){             
+        int atualx = 0, atualy = 0, selecaolateral = 0;
         unsigned char tecla;
         Informacao_vazia(informacao);
-        Imprime_tabuleiro(m, 0, 0, informacao);
-        while((tecla=getch()) != 13){         // M: 27=espaço     13=enter
-
+        Imprime_tabuleiro(m, 0, 0, informacao, opcoes);
+        while(1){         // M: 27=esc     13=enter
+        tecla=getch();
         Informacao_vazia(informacao);
  
         system("cls");                      // M: Ver como é no linux     #if...
@@ -138,24 +145,44 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
         if(tecla == 8 && m_teste[atualy][atualx] == 0)  // M: Acrescentei isso, se o usuario der back-space apaga o numero
                 m[atualy][atualx] = 0;
 
-        if(tecla == 118){
+        if(atualx == 9){
+                if(tecla == 80) selecaolateral++;
+                if(tecla == 72) selecaolateral--;
+
+                if(selecaolateral == -1) selecaolateral = 1;              // M: Modificar de acordo com a quantidade de botoes
+                if(selecaolateral == 2) selecaolateral = 0;                    
+                
+        }   
+        if((atualx == 9 && selecaolateral == 0 && tecla == 13) || (tecla == 118)){
             if(Verificar(m) == 1){
-                strcpy(informacao,"Parabens! Voce manja :p haha");
-                if(Pronto(m) == 1){
-                        printf("\n\n\n******PARABENS***\n");
-                        break;
-                }
+                    strcpy(informacao,"Parabens! Voce manja :p haha");
+                    if(Pronto(m) == 1){
+                            printf("\n\n\n******PARABENS***\n");
+                            break;
+                    }
             }
             else
-                strcpy(informacao,"Voce fracassou.. quem sabe na proxima");   
-        }         
+                strcpy(informacao,"Voce fracassou.. quem sabe na proxima");
+        }
+
+        if((atualx == 9 && selecaolateral == 1 && tecla == 13) || (tecla == 102))
+                break;
                 
-        if(atualx == -1) atualx=8;       // M: Quando o elemento selecionado passa do limite (linha ou coluna), ele "faz a volta"
-        if(atualx == 9)  atualx=0;
+        if(atualx == -1) atualx=9;       // M: Quando o elemento selecionado passa do limite (linha ou coluna), ele "faz a volta"
+        if(atualx == 10)  atualx=0;
         if(atualy == -1) atualy=8;
         if(atualy == 9)  atualy=0;
 
-        Imprime_tabuleiro(m, atualx, atualy, informacao);    // M: Passa a matriz, numero de elementos e a posição que pode ser modificada
+        // M: Quando for adicionado novos botoes, ajustar onde vai depois que passarpara a coluna 9 ex: if(atualy == 1)
+
+        if(atualx != 9)           //coluna de botões
+                Imprime_tabuleiro(m, atualx, atualy, informacao, opcoes);    // M: Passa a matriz, numero de elementos e a posição que pode ser modificada
+        else
+        {
+                Imprime_tabuleiro(m,9,selecaolateral,informacao, opcoes);
+        }
+        
+        
     }
     /*if (tecla==13)
         printf("Jogo pausado");              M: Talvez dê para inventar coisa aqui tipo isso ;)*/
@@ -167,14 +194,14 @@ void Meu_sudoku(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
         Informacao_vazia(informacao);
         Zerar_matriz(matriz_original);
         Zerar_matriz(matriz_final);        
-        Imprime_tabuleiro(matriz_original, 0, 0, informacao);
-        Preencher_matriz(matriz_original, matriz_final, informacao);             
+        Imprime_tabuleiro(matriz_original, 0, 0, informacao, 0);
+        Preencher_matriz(matriz_original, matriz_final, informacao, 0);             
 
         for(i=0; i<TAMANHO; i++)
                 for(j=0; j<TAMANHO; j++)
                         matriz_final[i][j] = matriz_original[i][j];
 
-        Preencher_matriz(matriz_final, matriz_original, informacao);
+        Preencher_matriz(matriz_final, matriz_original, informacao, 1);
 }
 
 void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
@@ -190,43 +217,58 @@ void Vetor_para_matriz(char vetor[81],int matriz_original[TAMANHO][TAMANHO], int
                 for(j=0; j<TAMANHO; j++)
                         matriz_final[i][j] = matriz_original[i][j];
         
-        Preencher_matriz(matriz_final, matriz_original, informacao); 
+        Preencher_matriz(matriz_final, matriz_original, informacao, 1); 
+}
+
+void Imprime_dificuldades(int escolha){
+    system("cls");
+    //textcolor(9);
+    printf( "%c%c%c%c%c%c%c%c%c%c"
+            "%c%c%c%c%c%c%c%c%c%c"
+            "%c%c%c%c%c%c%c%c%c%c"
+            "%c%c%c\n"
+    ,201,205,205,205,205,205,205,205,205,205
+    ,205,205,205,205,205,205,205,205,205,205
+    ,205,205,205,205,205,205,205,205,205,205,
+    205,205,187);
+
+    printf("%c\t\t\t\t%c\n%c\tEscolha o n%cvel:\t%c\n",186,186,186,161,186);
+    printf( "%c \t%c F%ccil\t\t\t%c\n" 
+            "%c \t%c M%cdio\t\t\t%c\n" 
+            "%c \t%c Dif%ccil\t\t%c\n" 
+            "%c \t%c Terr%cvel\t\t%c\n"
+            "%c\t\t\t\t%c\n"
+            ,186,(escolha==1)?175:32,160,186,186,(escolha==2)?175:32,130,186,186,(escolha==3)?175:32,161,186,186,(escolha==4)?175:32,161,186,186,186);
+
+    printf( "%c%c%c%c%c%c%c%c%c%c"
+            "%c%c%c%c%c%c%c%c%c%c"
+            "%c%c%c%c%c%c%c%c%c%c"
+            "%c%c%c\n"
+    ,200,205,205,205,205,205,205,205,205,205
+    ,205,205,205,205,205,205,205,205,205,205
+    ,205,205,205,205,205,205,205,205,205,205
+    ,205,205,188);
+
+    setbuf(stdin,NULL);
+
 }
 
 void Gera_jogo_aleatorio(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
-        int escolha = 0, sorteio = 0, aux = 0, x = 0;
+        int escolha = 1, sorteio = 0, aux = 0, x = 0;
+        unsigned char tecla;
         char num = 0, vetor[81];
         FILE *p;
-        system("cls");
-        //textcolor(9);
-        printf( "%c%c%c%c%c%c%c%c%c%c"
-                "%c%c%c%c%c%c%c%c%c%c"
-                "%c%c%c%c%c%c%c%c%c%c"
-                "%c%c%c\n"
-        ,201,205,205,205,205,205,205,205,205,205
-        ,205,205,205,205,205,205,205,205,205,205
-        ,205,205,205,205,205,205,205,205,205,205,
-        205,205,187);
+        Imprime_dificuldades(escolha);
+        while((tecla=getch()) != 13){        
 
-        printf("%c\t\t\t\t%c\n%c\tEscolha o n%cvel:\t%c\n",186,186,186,161,186);
-        printf( "%c \t(1)F%ccil\t\t%c\n" 
-                "%c \t(2)M%cdio\t\t%c\n" 
-                "%c \t(3)Dif%ccil\t\t%c\n" 
-                "%c \t(4)Terr%cvel\t\t%c\n"
-                "%c\t\t\t\t%c\n"
-                ,186,160,186,186,130,186,186,161,186,186,161,186,186,186);
+                if(tecla == 80) escolha++;              // M: Seta para cima
+                if(tecla == 72) escolha--;              // M: Seta para baixo
 
-        printf( "%c%c%c%c%c%c%c%c%c%c"
-                "%c%c%c%c%c%c%c%c%c%c"
-                "%c%c%c%c%c%c%c%c%c%c"
-                "%c%c%c\n"
-        ,200,205,205,205,205,205,205,205,205,205
-        ,205,205,205,205,205,205,205,205,205,205
-        ,205,205,205,205,205,205,205,205,205,205
-        ,205,205,188);
+                if(escolha == 5) escolha = 1;           // M: Retorno
+                if(escolha == 0) escolha = 4;
 
-        scanf("%d",&escolha);
-        setbuf(stdin,NULL);
+                Imprime_dificuldades(escolha);
+        }
 
         switch (escolha){
         case 1:
@@ -357,9 +399,8 @@ void Ranking(){
         ,205,205,205,205,205,205,188);
 }
 
-void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
-        int escolha;
-        system("cls");
+void Imprime_inicio(int escolha){
+    system("cls");
         //textcolor(9);
         printf( "%c%c%c%c%c%c%c%c%c%c"
                 "%c%c%c%c%c%c%c%c%c%c"
@@ -373,11 +414,10 @@ void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANH
         ,205,205,205,205,205,205,205,205,205,205
         ,205,205,205,205,205,205,205,205,205,205
         ,205,205,205,205,205,205,187);
-
-        printf( "%c    Digite: \t\t\t\t\t\t%c\n",186,186);
-        printf( "%c    (1)Para carregar um jogo aleat%crio.\t\t%c \n"
-                "%c    (2)Para carregar um jogo previamente definido.\t%c \n"
-                "%c    (3)Ranking\t\t\t\t\t\t%c\n",186,162,186,186,186,186,186);
+        printf("%c\t\t\t\t\t\t\t%c\n%c    Sudoku\t\t\t\t\t\t%c\n",186,186,186,186);
+        printf( "%c    %c Carregar um jogo aleat%crio.\t\t\t%c \n"
+                "%c    %c Carregar um jogo previamente definido.\t\t%c \n"
+                "%c    %c Ranking\t\t\t\t\t\t%c\n",186,(escolha==1)?175:32,162,186,186,(escolha==2)?175:32,186,186,(escolha==3)?175:32,186);
 
         printf( "%c%c%c%c%c%c%c%c%c%c"
                 "%c%c%c%c%c%c%c%c%c%c"
@@ -391,17 +431,27 @@ void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANH
         ,205,205,205,205,205,205,205,205,205,205
         ,205,205,205,205,205,205,205,205,205,205
         ,205,205,205,205,205,205,188);
+}
 
-        scanf("%d",&escolha);
-        setbuf(stdin,NULL);
+void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO]){
+        int escolha = 1;
+        unsigned char tecla;
+        Imprime_inicio(escolha);
+        while((tecla=getch()) != 13){        
+
+                if(tecla == 80) escolha++;              // M: Seta para cima
+                if(tecla == 72) escolha--;              // M: Seta para baixo
+
+                if(escolha == 4) escolha = 1;           // M: Retorno
+                if(escolha == 0) escolha = 3;
+
+                Imprime_inicio(escolha);
+        }        
 
         if(escolha == 1){
                 Gera_jogo_aleatorio(matriz_original, matriz_final);
-              
-
-        //}else if(escolha == 2){
-               // carregaJogoPreviamenteDefinido();
-        }else if(escolha == 2){                  // M: se digitar 3 tbm, n alterei pq povavelmente mudaremos para as setinhas
+            
+        }else if(escolha == 2){                  
                 Meu_sudoku(matriz_original, matriz_final); // M: estava->telaDeBoasVindas(matriz_original,matriz_final);
         }else{
                 Ranking();
