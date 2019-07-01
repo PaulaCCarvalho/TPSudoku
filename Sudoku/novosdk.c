@@ -243,9 +243,10 @@ int Verificar(int Sudoku[TAMANHO][TAMANHO]){
         return 1;
 }
 void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char user[20]);
+void Tela_entrar(int matriz_original[9][9], int matriz_final[9][9], char user[20]);
 
 void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char userk[20]){
-        int i=0, posicao=0;
+        int i=0, posicao=0,existe=0;
         char user[20], senha[20],userArq[20],senhaArq[20];
         unsigned char tecla;
         FILE *p,*s;
@@ -273,10 +274,20 @@ void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
                 fgets(userArq,20,p);
                 if((strcmp(user,userArq)) == 0){
                         posicao++;
+                        existe++;
                         break;
                 }else{
-                        posicao++;
+                        i++;
+                        if(i==2){
+                                posicao++;
+                                i=0;
+                        }
                 }
+        }
+        if(existe == 0){
+                printf("\nUsuario nao cadastrado!");
+                Sleep(1000);
+                Tela_entrar(matriz_original,matriz_final,user);               
         }
         while(!feof(s)){
                 fread(senhaArq,sizeof(char),20,s);
@@ -320,6 +331,12 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
 	}
 	senha[i]='\0';
 	setbuf(stdin,NULL);
+                if(senha[0]== '\0'){
+                printf("\nPrecisa-se de uma senha para continuar.Tente novamente!");
+                Sleep(2000);
+                Tela_cadastro(matriz_original,matriz_final,user);
+                
+        }
 	tecla = 1,i=0;
 	printf("\n%c   Confirmar senha: ",186);
 	while((tecla=getch()) != 13){
