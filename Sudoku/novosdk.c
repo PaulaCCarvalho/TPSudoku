@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include <windows.h>
 //#include <conio.c>
 // M: falta arrumar um erro que ALGUMAS VEZES aparece e manda todos os elementos pra uma casa depois (precisamos achar o padrão de quando isso acontece)
 // M: Só coloquei esse comentario aqui porque com certeza vão mecher nessa parte haha 
@@ -241,16 +242,18 @@ int Verificar(int Sudoku[TAMANHO][TAMANHO]){
         }
         return 1;
 }
+void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char user[20]);
 
-void Tela_login(){
-        int i=0;
-        char user[20], senha[20];
+void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char userk[20]){
+        int i=0, posicao=0;
+        char user[20], senha[20],userArq[20],senhaArq[20];
         unsigned char tecla;
+        FILE *p,*s;
 
         system("cls");
         printf( "%c\n%c\n%c\tLogin\n",201,186,186);
         printf("%c   Usu%crio: ",186,160);
-        scanf("%s",user);
+        fgets(user,20,stdin);
         setbuf(stdin,NULL);
         printf("%c   Senha: ",186);
         while((tecla=getch()) != 13){
@@ -260,17 +263,49 @@ void Tela_login(){
                 i++;
         }
         senha[i]='\0';
-
+        p = fopen("usuarios.txt","r");
+        s = fopen("senhas.bin","rb");
+        if(p == NULL || s == NULL){
+                printf("Erro ao abrir o arquivo!");
+                exit(1);
+        }
+        while(!feof(p)){
+                fgets(userArq,20,p);
+                if((strcmp(user,userArq)) == 0){
+                        posicao++;
+                        break;
+                }else{
+                        posicao++;
+                }
+        }
+        while(!feof(s)){
+                fread(senhaArq,sizeof(char),20,s);
+                posicao--;
+                if(posicao == 0){
+                        if((strcmp(senha, senhaArq)) == 0){
+                                Tela_inicial(matriz_original, matriz_final,user);
+                        }else{
+                                printf("\n\nSenha incorreta.Tente Novamente!");
+                                Sleep(1000);
+                                Tela_login(matriz_original,matriz_final,userk);
+                        }
+                }
+        }
+        fclose(p);
+        fclose(s);
         printf("\n%c\n",200);
 }
 
-void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char user[20]);
-
 void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[20]){
 	int i=0;
-	char senha[20],confirmar[20];
+	char senha[20],confirmar[20],userArq[20];
 	unsigned char tecla;
-	
+        FILE *p;
+	p = fopen("usuarios.txt","a+");
+        if(p == NULL){
+                printf("Erro ao abrir o arquivo!");
+                exit(1);
+        }
 	system("cls");
 	printf( "%c\n%c\n%c\tCadastro\n",201,186,186);
 
@@ -297,9 +332,34 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
 	
 	printf("\n%c\n",200);
                 
-	if(strcmp(senha, confirmar) == 0)
+	if(strcmp(senha, confirmar) == 0){
+                p = fopen("usuarios.txt","a+");
+                if(p == NULL){
+                        printf("Erro ao abrir o arquivo!");
+                        exit(1);
+                }
+                while(!feof(p)){
+                        fgets(userArq,20,p);
+                        if((strcmp(userArq,user))==0){
+                                printf("\nUsuario ja cadastrado!");
+                                Sleep(1000);
+                                Tela_inicial(matriz_original,matriz_final,0);
+                        }
+                }
+                fputs(user,p);
+                fputs("\n",p);
+                fflush(p);
+                fclose(p);
+                p = fopen("senhas.bin","a+b");
+                if(p == NULL){
+                        printf("Erro ao abrir o arquivo!");
+                        exit(1);
+                }
+                fwrite(confirmar,sizeof(char),20,p);
+                
+                fclose(p);
 		Tela_inicial(matriz_original, matriz_final,user);
-	else{
+	}else{
                 printf("\n\tErro ao fazer o cadastro\n %c Tentar novamente\n",175);  
                 while(1){
                      tecla=getch(); 
@@ -311,6 +371,7 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                 }
 		 
 	}
+
 	
 }
 
@@ -358,7 +419,7 @@ void Tela_entrar(int matriz_original[9][9], int matriz_final[9][9], char user[20
     }  
     
 	if(escolha == 1)
-		Tela_login();
+		Tela_login(matriz_original, matriz_final, user);
 	else
 		Tela_cadastro(matriz_original, matriz_final, user);
 		
