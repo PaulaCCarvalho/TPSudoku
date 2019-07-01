@@ -242,28 +242,78 @@ int Verificar(int Sudoku[TAMANHO][TAMANHO]){
         }
         return 1;
 }
+
 void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char user[20]);
 void Tela_entrar(int matriz_original[9][9], int matriz_final[9][9], char user[20]);
 
+void Imprime_login(char user[20], int tamanho_senha){
+		system("cls");
+        int i;
+        char strsenha[20]="                  ";
+        for(i=0; i<tamanho_senha; i++)
+        	strsenha[i]='*';
+        printf( "%c%c%c%c%c%c%c%c%c%c"
+                "%c%c%c%c%c%c%c%c%c%c"
+                "%c%c%c%c%c%c%c%c%c%c"
+                "%c%c%c%c%c%c\n"
+                ,201,205,205,205,205,205,205,205,205,205
+                ,205,205,205,205,205,205,205,205,205,205
+                ,205,205,205,205,205,205,205,205,205,205,
+                205,205,205,205,205,187);
+
+        printf("%c\t\t\t\t   %c\n%c\tLogin:\t\t\t   %c\n",186,186,186,186);
+        printf("%c  Usu%crio: %s    %c\n",186,160,user,186);
+        printf("%c  Senha: %s \t   %c\n",186,strsenha,186);
+              
+
+        printf( "%c%c%c%c%c%c%c%c%c%c"
+                "%c%c%c%c%c%c%c%c%c%c"
+                "%c%c%c%c%c%c%c%c%c%c"
+                "%c%c%c%c%c%c\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                ,200,205,205,205,205,205,205,205,205,205
+                ,205,205,205,205,205,205,205,205,205,205
+                ,205,205,205,205,205,205,205,205,205,205
+                ,205,205,205,205,205,188);
+
+        setbuf(stdin,NULL);
+}
+
 void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char userk[20]){
         int i=0, posicao=0,existe=0;
-        char user[20], senha[20],userArq[20],senhaArq[20];
+        char user[20]="                   ", senha[20]="                   ",userArq[20],senhaArq[20];
+        
         unsigned char tecla;
+        Imprime_login(user,0);
         FILE *p,*s;
-
-        system("cls");
-        printf( "%c\n%c\n%c\tLogin\n",201,186,186);
-        printf("%c   Usu%crio: ",186,160);
-        fgets(user,20,stdin);
-        setbuf(stdin,NULL);
-        printf("%c   Senha: ",186);
-        while((tecla=getch()) != 13){
-                senha[i] = tecla;
-                printf("*");
-                setbuf(stdin,NULL);
-                i++;
+		while((tecla=getch()) != 13){
+				if(tecla == 8 && i >= 0){
+                	i--;
+                	user[i]=' ';
+                }else{
+	                user[i] = tecla;
+	                setbuf(stdin,NULL);
+	                i++;
+	            }
+                Imprime_login(user,0);
         }
-        senha[i]='\0';
+        printf("%s",user);
+        tecla=1;
+        setbuf(stdin,NULL);
+        i=0;
+        while((tecla=getch()) != 13){           
+                if(tecla == 8 && i >= 0){
+                	i--;
+                	senha[i]=' ';
+                }
+				else{
+					senha[i] = tecla;
+					i++;
+				}
+				Imprime_login(user,i);
+				setbuf(stdin,NULL);
+        }
+        printf("%s",senha);
+        
         p = fopen("usuarios.txt","r");
         s = fopen("senhas.bin","rb");
         if(p == NULL || s == NULL){
@@ -307,9 +357,41 @@ void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
         printf("\n%c\n",200);
 }
 
+void Imprime_cadastro(char user[20], int tamanho_senha, int tamanho_confirm){
+	system("cls");
+	int i;
+	char strsenha[20]="                  ", strconfirm[20]="                  ";
+	for(i=0; i<tamanho_senha; i++)
+		strsenha[i]='*';
+	for(i=0; i<tamanho_confirm; i++)
+		strconfirm[i]='*';
+	printf( "%c%c%c%c%c%c%c%c%c%c"
+			"%c%c%c%c%c%c%c%c%c%c%c%c%c"
+			"%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n"
+			,201,205,205,205,205,205,205,205,205,205
+			,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205
+			,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,187);
+	
+	printf("%c\t\t\t\t\t%c\n%c\tLogin:\t\t\t\t%c\n",186,186,186,186);
+	printf("%c  Usu%crio: %s\t\t%c\t\n",186,160,user,186);
+	printf("%c  Senha: %s \t\t%c\n",186,strsenha,186);
+	printf("%c  Confirmar senha: %s  %c\n",186,strconfirm,186);
+	
+	printf( "%c%c%c%c%c%c%c%c%c%c"
+			"%c%c%c%c%c%c%c%c%c%c"
+			"%c%c%c%c%c%c%c%c%c%c"
+			"%c%c%c%c%c%c%c%c%c%c%c\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+			,200,205,205,205,205,205,205,205,205,205
+			,205,205,205,205,205,205,205,205,205,205
+			,205,205,205,205,205,205,205,205,205,205
+			,205,205,205,205,205,205,205,205,205,205,188);
+			
+	setbuf(stdin,NULL);
+}
+
 void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[20]){
-	int i=0;
-	char senha[20],confirmar[20],userArq[20];
+	int i=0, tamanho_senha=0;
+	char senha[20]="                   ",confirmar[20]="                   ",userArq[20];
 	unsigned char tecla;
         FILE *p;
 	p = fopen("usuarios.txt","a+");
@@ -317,37 +399,64 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                 printf("Erro ao abrir o arquivo!");
                 exit(1);
         }
-	system("cls");
-	printf( "%c\n%c\n%c\tCadastro\n",201,186,186);
-
-	printf("%c   Usu%crio: ",186,160);
-	scanf("%s",user);
-	printf("%c   Senha: ",186);
-	while((tecla=getch()) != 13){
-		senha[i] = tecla;
-		printf("*");
-		setbuf(stdin,NULL);
-		i++;
-	}
-	senha[i]='\0';
-	setbuf(stdin,NULL);
-                if(senha[0]== '\0'){
-                printf("\nPrecisa-se de uma senha para continuar.Tente novamente!");
-                Sleep(2000);
-                Tela_cadastro(matriz_original,matriz_final,user);
-                
-        }
-	tecla = 1,i=0;
-	printf("\n%c   Confirmar senha: ",186);
-	while((tecla=getch()) != 13){
-		confirmar[i] = tecla;
-		printf("*");
-		setbuf(stdin,NULL);
-		i++;
-	}
-	confirmar[i]='\0'; 
 	
-	printf("\n%c\n",200);
+	strcpy(user,"                   ");
+	Imprime_cadastro(user,0,0);
+	
+	while((tecla=getch()) != 13){
+			if(tecla == 8 && i >= 0){
+            	i--;
+            	user[i]=' ';
+            }else{
+                user[i] = tecla;
+                setbuf(stdin,NULL);
+                i++;
+            }
+            Imprime_cadastro(user,0,0);
+    }
+    
+    tecla=1;
+    setbuf(stdin,NULL);
+    i=0;
+    while((tecla=getch()) != 13){           
+            if(tecla == 8 && tamanho_senha >= 0){
+            	tamanho_senha--;
+            	senha[tamanho_senha]=' ';
+            }
+			else{
+				senha[tamanho_senha] = tecla;
+				tamanho_senha++;
+			}
+			Imprime_cadastro(user,tamanho_senha,0);
+			setbuf(stdin,NULL);
+    }
+    if ((strcmp(senha,"                   ") == 0)) senha[0]='\0';
+    
+    if(senha[0]== '\0'){
+    	system("cls");
+        printf("\nPrecisa-se de uma senha para continuar.Tente novamente!");
+        Sleep(2000);
+        Tela_cadastro(matriz_original,matriz_final,user);
+    }
+        
+	tecla = 1,i=0;
+	
+	while((tecla=getch()) != 13){           
+            if(tecla == 8 && i >= 0){
+            	i--;
+            	confirmar[i]=' ';
+            }
+			else{
+				confirmar[i] = tecla;
+				i++;
+			}
+			Imprime_cadastro(user,tamanho_senha,i);
+			setbuf(stdin,NULL);
+    }
+	
+
+	
+	//printf("\n%c\n",200);
                 
 	if(strcmp(senha, confirmar) == 0){
                 p = fopen("usuarios.txt","a+");
@@ -360,7 +469,8 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                         if((strcmp(userArq,user))==0){
                                 printf("\nUsuario ja cadastrado!");
                                 Sleep(1000);
-                                Tela_inicial(matriz_original,matriz_final,0);
+        						strcpy(user,"Login / Sair       ");
+                                Tela_inicial(matriz_original,matriz_final,user);
                         }
                 }
                 fputs(user,p);
@@ -381,7 +491,7 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                 while(1){
                      tecla=getch(); 
                      if(tecla == 13){
-                             strcpy(user,"Login / Sair");
+                             strcpy(user,"Login / Sair       ");
                              Tela_cadastro(matriz_original, matriz_final, user);
                      }
 
@@ -845,14 +955,16 @@ void Imprime_inicio(int escolha, char user[20]){
         ,205,205,205,205,205,205,205,205,205,205
         ,205,205,205,205,205,205,205,205,205,205
         ,205,205,205,205,205,205,188);
-        printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t%c",201);
-        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c  %c %s    ",186,(escolha==6)?175:32,user);
-        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c\n",200);
+        printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\t\t\t\t");
+		printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",201,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,187);
+        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c  %c %s %c",186,(escolha==6)?175:32,user,186);
+        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",200,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,188);
 }
 
 void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char user[20]){
         int escolha = 1;
         unsigned char tecla;
+        
         Imprime_inicio(escolha, user);
         while((tecla=getch()) != 13){        
 
@@ -884,7 +996,7 @@ void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANH
 int main(){
         int matriz_original[TAMANHO][TAMANHO];
         int matriz_final[TAMANHO][TAMANHO]; 
-        char user[20] = "Login / Sair";
+        char user[20] = "Login / Sair       ";
         Tela_inicial(matriz_original, matriz_final,user);
         
         return 0;
