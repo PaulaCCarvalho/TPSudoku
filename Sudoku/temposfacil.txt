@@ -1,6 +1,6 @@
 352
-Diego
-0
-Paula
-0
-Miriele
+Diego              
+000000
+Paula              
+000000
+Miriele            

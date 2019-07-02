@@ -17,7 +17,7 @@ void Controla_tempo(int tempo, int escolha, char user[20]){
         FILE *p;
         int atualx = 0, atualy = 0, selecaolateral = 0;	        
         int aux_tempo_01, aux_tempo_02,aux_tempo_03;
-        char aux_tempostr_01[20], aux_tempostr_02[20], aux_tempostr_03[20], nome01[100], nome02[100], nome03[100], nome_usuario[100];
+        char aux_tempostr_01[20], aux_tempostr_02[20], aux_tempostr_03[20], nome01[100], nome02[100], nome03[100];
         printf("/nO seu tempo foi de:\t %i:%i\n", tempo / 60, tempo % 60);
         switch(escolha){
                         case 1:
@@ -57,16 +57,18 @@ void Controla_tempo(int tempo, int escolha, char user[20]){
                                 }
                                 break;
                 }
-                fgets(aux_tempostr_01, 20, p);
-                fgets(nome01, 100, p);
-                fgets(aux_tempostr_02, 20, p);
-                fgets(nome02, 100, p);
-                fgets(aux_tempostr_03, 20, p);
-                fgets(nome03, 100, p);
-                aux_tempo_01 = atoi(aux_tempostr_01);
-                aux_tempo_02 = atoi(aux_tempostr_02);
-                aux_tempo_03 = atoi(aux_tempostr_03);
-                fclose(p);
+                if(escolha != 5){
+                        fgets(aux_tempostr_01, 20, p);
+                        fgets(nome01, 100, p);
+                        fgets(aux_tempostr_02, 20, p);
+                        fgets(nome02, 100, p);
+                        fgets(aux_tempostr_03, 20, p);
+                        fgets(nome03, 100, p);
+                        aux_tempo_01 = atoi(aux_tempostr_01);
+                        aux_tempo_02 = atoi(aux_tempostr_02);
+                        aux_tempo_03 = atoi(aux_tempostr_03);
+                        fclose(p);
+                }
                 switch(escolha){
                         case 1:
                                 p = fopen("temposfacil.txt", "w");
@@ -103,75 +105,80 @@ void Controla_tempo(int tempo, int escolha, char user[20]){
                                         exit(1);
                                 }
                 }
-
-                 if (aux_tempo_01 == 0){
-                        aux_tempo_01 = tempo;
-                        strcpy(nome01, nome_usuario);
-                }
-                else if(aux_tempo_02 == 0){
-                        if(tempo < aux_tempo_01){
-                                aux_tempo_02 = aux_tempo_01;
-                                strcpy(nome02, nome01);
+                if(escolha != 5){
+                        if (aux_tempo_01 == 0){
                                 aux_tempo_01 = tempo;
-                                strcpy(nome01, nome_usuario);
+                                strcpy(nome01, user);
                         }
-                        else{    
-                                aux_tempo_02 = tempo;
-                                strcpy(nome02, nome_usuario);
+                        else if(aux_tempo_02 == 0){
+                                if(tempo < aux_tempo_01){
+                                        aux_tempo_02 = aux_tempo_01;
+                                        strcpy(nome02, nome01);
+                                        aux_tempo_01 = tempo;
+                                        strcpy(nome01, user);
+                                }
+                                else{    
+                                        aux_tempo_02 = tempo;
+                                        strcpy(nome02, user);
+                                }
                         }
-                }
-                else if(aux_tempo_03 == 0){
-                        if(tempo < aux_tempo_01){
+                        else if(aux_tempo_03 == 0){
+                                if(tempo < aux_tempo_01){
+                                        aux_tempo_03 = aux_tempo_02;
+                                        strcpy(nome03, nome02);
+                                        aux_tempo_02 = aux_tempo_01;
+                                        strcpy(nome02, nome01);
+                                        aux_tempo_01 = tempo;
+                                        strcpy(nome01, user);
+                                }
+                                else if(tempo < aux_tempo_02){
+                                        aux_tempo_03 = aux_tempo_02;
+                                        strcpy(nome03, nome02);
+                                        aux_tempo_02 = tempo;
+                                        strcpy(nome02, user);
+                                }
+                                else{ 
+                                        aux_tempo_03 = tempo;
+                                        strcpy(nome03, user);
+                                }
+                        }
+                        else if(tempo < aux_tempo_01){
                                 aux_tempo_03 = aux_tempo_02;
                                 strcpy(nome03, nome02);
                                 aux_tempo_02 = aux_tempo_01;
                                 strcpy(nome02, nome01);
                                 aux_tempo_01 = tempo;
-                                strcpy(nome01, nome_usuario);
+                                strcpy(nome01, user);
                         }
                         else if(tempo < aux_tempo_02){
                                 aux_tempo_03 = aux_tempo_02;
                                 strcpy(nome03, nome02);
                                 aux_tempo_02 = tempo;
-                                strcpy(nome02, nome_usuario);
+                                strcpy(nome02, user);
                         }
-                        else{ 
+                        else if(tempo < aux_tempo_03){
                                 aux_tempo_03 = tempo;
-                                strcpy(nome03, nome_usuario);
+                                strcpy(nome03, user);
                         }
+                        else printf("Lamento %s\tMas o seu tempo nao entrou no RANKING\n", user);
+                        sprintf(aux_tempostr_01, "%i", aux_tempo_01);
+                        sprintf(aux_tempostr_02, "%i", aux_tempo_02);
+                        sprintf(aux_tempostr_03, "%i", aux_tempo_03);
+                        fputs(aux_tempostr_01, p);
+                        fputc('\n', p);
+                        fputs(nome01, p);
+                        fputs(aux_tempostr_02, p);
+                        fputc('\n', p);
+                        fputs(nome02, p);
+                        fputs(aux_tempostr_03, p);
+                        fputc('\n', p);
+                        fputs(nome03, p);
+                        fclose(p);
                 }
-                else if(tempo < aux_tempo_01){
-                        aux_tempo_03 = aux_tempo_02;
-                        strcpy(nome03, nome02);
-                        aux_tempo_02 = aux_tempo_01;
-                        strcpy(nome02, nome01);
-                        aux_tempo_01 = tempo;
-                        strcpy(nome01, nome_usuario);
+                if(escolha == 5){
+                        system("cls");
+                        printf("Jogo continuado");
                 }
-                else if(tempo < aux_tempo_02){
-                        aux_tempo_03 = aux_tempo_02;
-                        strcpy(nome03, nome02);
-                        aux_tempo_02 = tempo;
-                        strcpy(nome02, nome_usuario);
-                }
-                else if(tempo < aux_tempo_03){
-                        aux_tempo_03 = tempo;
-                        strcpy(nome03, nome_usuario);
-                }
-                else printf("Lamento %s\tMas o seu tempo nao entrou no RANKING\n", nome_usuario);
-                sprintf(aux_tempostr_01, "%i", aux_tempo_01);
-                sprintf(aux_tempostr_02, "%i", aux_tempo_02);
-                sprintf(aux_tempostr_03, "%i", aux_tempo_03);
-                fputs(aux_tempostr_01, p);
-                fputc('\n', p);
-                fputs(nome01, p);
-                fputs(aux_tempostr_02, p);
-                fputc('\n', p);
-                fputs(nome02, p);
-                fputs(aux_tempostr_03, p);
-                fputc('\n', p);
-                fputs(nome03, p);
-                fclose(p);
 }
 
 void Zerar_matriz(int m[TAMANHO][TAMANHO]){              // M: n=9
@@ -383,7 +390,6 @@ void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
 	            }
                 Imprime_login(user,0);
         }
-        printf("%s",user);
         tecla=1;
         setbuf(stdin,NULL);
         i=0;
@@ -399,7 +405,6 @@ void Tela_login(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
 				Imprime_login(user,i);
 				setbuf(stdin,NULL);
         }
-        printf("%s",senha);
         
         p = fopen("usuarios.txt","r");
         s = fopen("senhas.bin","rb");
@@ -459,7 +464,7 @@ void Imprime_cadastro(char user[20], int tamanho_senha, int tamanho_confirm){
 			,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205
 			,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,187);
 	
-	printf("%c\t\t\t\t\t%c\n%c\tLogin:\t\t\t\t%c\n",186,186,186,186);
+	printf("%c\t\t\t\t\t%c\n%c\tCadastro\t\t\t%c\n",186,186,186,186);
 	printf("%c  Usu%crio: %s\t\t%c\t\n",186,160,user,186);
 	printf("%c  Senha: %s \t\t%c\n",186,strsenha,186);
 	printf("%c  Confirmar senha: %s  %c\n",186,strconfirm,186);
@@ -572,14 +577,6 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                 fwrite(confirmar,sizeof(char),20,p);
                 
                 fclose(p);
-                strcpy(userArq, user);
-                strcat(userArq,".txt"); 
-                p = fopen(userArq, "w");
-                if(p == NULL){
-                        printf("Erro ao abrir o arquivo");
-                        exit(1);
-                }
-                fclose(p);
 		Tela_inicial(matriz_original, matriz_final,user);
 	}else{
                 printf("\n\tErro ao fazer o cadastro\n %c Tentar novamente\n",175);  
@@ -647,7 +644,7 @@ void Tela_entrar(int matriz_original[9][9], int matriz_final[9][9], char user[20
 		
 }
 
-Matriz_Resolucao(int matriz_resolucao[TAMANHO][TAMANHO]){
+void Matriz_Resolucao(int matriz_resolucao[TAMANHO][TAMANHO]){
         int i,j;
         char c;
         FILE *p;
@@ -666,10 +663,11 @@ Matriz_Resolucao(int matriz_resolucao[TAMANHO][TAMANHO]){
         fclose(p);
 }
 
-void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char informacao[45], int opcoes, char user[20]){
+void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int matriz_original[TAMANHO][TAMANHO], int atualx, int atualy, char informacao[45], int opcoes, char user[20]){
         int i, j, matriz_resolucao[TAMANHO][TAMANHO];
         char resolucao[81],c;
         Matriz_Resolucao(matriz_resolucao);
+        if(opcoes == 0)Zerar_matriz(matriz_resolucao);
         system("cls");
 	printf("\n\n\n\n");
         foreground(BLUE);
@@ -688,18 +686,20 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
                         }         
                         else if(m[i][j] == 0)                   // M: Se a posiÃ§Ã£o estiver vazia (zero), mostra um espaÃ§o
                                 printf("%c ",32);               
-                    /*     else if(m[i][j]==matriz_original[i][j]){
+                         else if(m[i][j]==matriz_original[i][j]){
                                 foreground(BLUE);
                                 printf("%c ",m[i][j]+48);       // M: Se nÃ£o, mostra o nÃºmero
                                 style(RESETALL);
-                        } */
-                        else if(m[i][j]==matriz_resolucao[i][j]){
+                        } 
+                        else if(m[i][j] !=matriz_resolucao[i][j]){
                                 foreground(RED);
                                 printf("%c ",m[i][j]+48);
                                 style(RESETALL);
-                        }else
+                        }else{
+                                foreground(GREEN);
                                 printf("%c ",m[i][j]+48);
-                                
+                                style(RESETALL);
+                        }       
                         foreground(BLUE);
                         if(j == 2 || j == 5 || j == 8)                    // M: Aqui vai a "divisÃ£o vertical"
                                 printf("%c ",186);
@@ -719,11 +719,6 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
                 if(i == 3)
                         printf("\t\t\t%c Voltar",(atualx == 9 && atualy == 2)?175:32);
                 
-                if(i == 6)
-                    printf("\tOBS: SE ISSO ACONTECER ^^ E O SUDOKU ESTIVER COMPLETO, SAI DO LACO WHILE");
-                if(i ==7)
-                    printf("\t\t%s",informacao);       //M: Vai digitar alguma informaÃ§Ã£o especial
-                
                 if(i == 2 || i == 5){ 
                         foreground(BLUE);                           // M: Ao final da 3Â° linha e da 5Â°, irÃ¡ mostar esta linha "divisÃ£o horizontal"
                         printf("\n\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",204,205,205,205,205,205,205,205,205,205,205,205,206,205,205,205,205,205,205,205,205,205,205,205,206,205,205,205,205,205,205,205,205,205,205,205,185);
@@ -736,15 +731,17 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
         }
         foreground(BLUE);
         printf("\n\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",200,205,205,205,205,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,205,205,205,205,188); 
-        printf("\n\n\n\t\t\t\t\t\t\t\t\t\t\t%c",201);
-        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c  %c %s    ",186,(atualx == 9 && atualy == 3)?175:32,user);
-        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c\n",200);
+        printf("\t\t\t\t\t\t\t\t\t\t\t");
+        printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",201,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,187);
+        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c  %c %s %c",186,(strcmp(user,"Login / Sair       " ) == 0)?175:32,user,186);
+        printf("\n\t\t\t\t\t\t\t\t\t\t\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",200,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,205,188);
         style(RESETALL);
 
 
 }
 
 void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45], int opcoes, char user[20], int escolha){             
+        style(RESETALL);
         int atualx = 0, atualy = 0, selecaolateral = 0, tempo, i, j, x = 0;
         unsigned char tecla;
         FILE *p;
@@ -752,7 +749,7 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
         clock_t tempo_gasto;
         Informacao_vazia(informacao);
         tempo_gasto = clock();
-        Imprime_tabuleiro(m, 0, 0, informacao, opcoes, user);
+        Imprime_tabuleiro(m,m_teste, 0, 0, informacao, opcoes, user);
         while(1){         // M: 27=esc     13=enter
                 tecla=getch();
                 Informacao_vazia(informacao);
@@ -793,18 +790,8 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
         }
 
         if((atualx == 9 && selecaolateral == 2 && tecla == 13)){
-                if(opcoes == 0){
-                        if(strcmp(user, "Login / Sair       ") == 0){
-                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
-                                Sleep(1000);
-                                Zerar_matriz(m);
-                                Zerar_matriz(m_teste);
-                                Tela_inicial(m, m_teste, user);
-                                break;
-                        }
-                        strcpy(userArq, user);
-                        strcat(userArq, ".txt");
-                        p = fopen(userArq,"w");
+                if(opcoes == 1){
+                        p = fopen("Continua.txt","w");
                         if(p == NULL){
                                 printf("Erro ao abrir o arquivo!");
                                 exit(1);
@@ -824,42 +811,6 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
                                         v = m[i][j] + 48;
                                         fprintf(p,"%c",v);  
                                         fflush(p);         
-                                }
-                        }
-                        fputc('\n', p);
-                        fflush(p);
-                        fclose(p);               
-                }else{
-                        if(strcmp(user, "Login / Sair       ") == 0){
-                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
-                                Sleep(1000);
-                                Zerar_matriz(m);
-                                Zerar_matriz(m_teste);
-                                Tela_inicial(m, m_teste, user);
-                                break;
-                        }
-                        strcpy(userArq, user);
-                        strcat(userArq, ".txt");
-                        p = fopen(userArq,"w");
-                        if(p == NULL){
-                                printf("Erro ao abrir o arquivo!");
-                                exit(1);
-                        }
-                        for(i=0;i<TAMANHO;i++){
-                                for(j=0;j<TAMANHO;j++,x++){
-                                        v = m[i][j] + 48; 
-                                        fprintf(p,"%c",v);  
-                                        fflush(p);        
-                                }
-                        }
-                        fputc('\n',p);
-                        fflush(p); 
-                        x = 0;
-                        for(i=0;i<TAMANHO;i++){
-                                for(j=0;j<TAMANHO;j++,x++){
-                                        v = m_teste[i][j] + 48;   
-                                        fprintf(p,"%c",v);  
-                                        fflush(p);      
                                 }
                         }
                         fputc('\n', p);
@@ -868,22 +819,16 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
                 }
                 Zerar_matriz(m);
                 Zerar_matriz(m_teste);
-                if(opcoes == 0)
+                tempo_gasto = clock() - tempo_gasto;
+                if(opcoes == 1)
                         Tela_inicial(m_teste,m, user);
                 else
                         Tela_inicial(m, m_teste, user);
         }
 
         if((atualx == 9 && selecaolateral == 1 && tecla == 13) || (tecla == 102)){
-                if(opcoes == 0){
-                        if(strcmp(user, "Login / Sair       ") == 0){
-                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
-                                Sleep(1000);
-                                break;
-                        }
-                        strcpy(userArq, user);
-                        strcat(userArq, ".txt");
-                        p = fopen(userArq,"w");
+                if(opcoes == 1){
+                        p = fopen("Continua.txt","w");
                         if(p == NULL){
                                 printf("Erro ao abrir o arquivo!");
                                 exit(1);
@@ -908,43 +853,8 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
                         fputc('\n', p);
                         fflush(p);
                         fclose(p);               
-                }else{
-                        if(strcmp(user, "Login / Sair       ") == 0){
-                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
-                                Sleep(1000);
-                                Zerar_matriz(m);
-                                Zerar_matriz(m_teste);
-                                Tela_inicial(m, m_teste, user);
-                                break;
-                        }
-                        strcpy(userArq, user);
-                        strcat(userArq, ".txt");
-                        p = fopen(userArq,"w");
-                        if(p == NULL){
-                                printf("Erro ao abrir o arquivo!");
-                                exit(1);
-                        }
-                        for(i=0;i<TAMANHO;i++){
-                                for(j=0;j<TAMANHO;j++,x++){
-                                        v = m[i][j] + 48; 
-                                        fprintf(p,"%c",v);  
-                                        fflush(p);        
-                                }
-                        }
-                        fputc('\n',p);
-                        fflush(p); 
-                        x = 0;
-                        for(i=0;i<TAMANHO;i++){
-                                for(j=0;j<TAMANHO;j++,x++){
-                                        v = m_teste[i][j] + 48;   
-                                        fprintf(p,"%c",v);  
-                                        fflush(p);      
-                                }
-                        }
-                        fputc('\n', p);
-                        fflush(p);
-                        fclose(p);               
                 }
+                tempo_gasto = clock() - tempo_gasto;
                 break;
         }
                 
@@ -956,10 +866,10 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
         // M: Quando for adicionado novos botoes, ajustar onde vai depois que passarpara a coluna 9 ex: if(atualy == 1)
 
         if(atualx != 9)           //coluna de botões
-                Imprime_tabuleiro(m, atualx, atualy, informacao, opcoes, user);    // M: Passa a matriz, numero de elementos e a posição que pode ser modificada
+                Imprime_tabuleiro(m, m_teste, atualx, atualy, informacao, opcoes, user);    // M: Passa a matriz, numero de elementos e a posição que pode ser modificada
         else
         {
-                Imprime_tabuleiro(m,9,selecaolateral,informacao, opcoes, user);
+                Imprime_tabuleiro(m, m_teste, 9,selecaolateral,informacao, opcoes, user);
         }
         
         
@@ -973,16 +883,7 @@ void Continua_jogo(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMAN
         int i, x = 0, j;
         char userArq[30], vetor[81], informacao[45];
         Informacao_vazia(informacao);
-        if(strcmp(user,"Login / Sair       ") == 0){
-                printf("Fa%ca o Login ou Cadastre-se\n", 135);
-                Sleep(1000);
-                Tela_entrar(matriz_original, matriz_final, user);
-        }
-        setbuf(stdin, NULL);
-        strcpy(userArq, user);
-        setbuf(stdin, NULL);
-        strcat(userArq, ".txt");
-        p = fopen(userArq, "r");
+        p = fopen("Continua.txt", "r");
         if(p == NULL){
                 printf("Errinho...\n");
                 exit(1);
@@ -998,7 +899,7 @@ void Continua_jogo(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMAN
                 for(j=0; j<TAMANHO; j++,x++)
                         matriz_final[i][j] = vetor[x] - 48;
         fclose(p);
-        Preencher_matriz(matriz_original, matriz_final, informacao,0,user,5);
+        Preencher_matriz(matriz_original, matriz_final, informacao,1,user,5);
 }
 
 void Meu_sudoku(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO], char user[20]){  // M: Para o usuario digitar seu sudoku
@@ -1007,7 +908,7 @@ void Meu_sudoku(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO]
         Informacao_vazia(informacao);
         Zerar_matriz(matriz_original);
         Zerar_matriz(matriz_final);        
-        Imprime_tabuleiro(matriz_original, 0, 0, informacao, 0, user);
+        Imprime_tabuleiro(matriz_original, matriz_final, 0, 0, informacao, 0, user);
         Preencher_matriz(matriz_original, matriz_final, informacao, 0, user, 0);             
 
         for(i=0; i<TAMANHO; i++)
@@ -1167,7 +1068,7 @@ void Ranking(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TA
         fgets(nome, 100, p);
         nome[strlen(nome) - 1] = '\0';
         tempo = atoi(tempostr);
-        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
+        printf("%c\t\t%i:%i\t%s\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposmedio.txt","r");
@@ -1181,7 +1082,7 @@ void Ranking(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TA
         fgets(nome, 100, p);
         nome[strlen(nome) - 1] = '\0';
         tempo = atoi(tempostr);
-        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
+        printf("%c\t\t%i:%i\t%s\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposdificil.txt","r");
@@ -1195,7 +1096,7 @@ void Ranking(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TA
         fgets(nome, 100, p);
         nome[strlen(nome) - 1] = '\0';
         tempo = atoi(tempostr);
-        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
+        printf("%c\t\t%i:%i\t%s\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposterrivel.txt","r");
@@ -1209,7 +1110,7 @@ void Ranking(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TA
         fgets(nome, 100, p);
         nome[strlen(nome) - 1] = '\0';
         tempo = atoi(tempostr);
-        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
+        printf("%c\t\t%i:%i\t%s\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     p = fopen("temposMeuSudoku.txt","r");
@@ -1223,7 +1124,7 @@ void Ranking(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TA
         fgets(nome, 100, p);
         nome[strlen(nome) - 1] = '\0';
         tempo = atoi(tempostr);
-        printf("%c\t\t%i:%i\t%s\t\t\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
+        printf("%c\t\t%i:%i\t%s\t\t%c\n",186,tempo/60, tempo % 60, nome, 186);
     }
     fclose(p);
     printf("%c\t\t\t\t\t\t\t%c\n%c\t\t\tPrecione ENTER para voltar\t%c\n",186,186,186,186);
