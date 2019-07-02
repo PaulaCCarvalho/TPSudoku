@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <ctype.h>
 #include <time.h>
+#include "colors.h"
 //#include <conio.c>
 // M: falta arrumar um erro que ALGUMAS VEZES aparece e manda todos os elementos pra uma casa depois (precisamos achar o padrão de quando isso acontece)
 // M: Só coloquei esse comentario aqui porque com certeza vão mecher nessa parte haha 
@@ -646,29 +647,67 @@ void Tela_entrar(int matriz_original[9][9], int matriz_final[9][9], char user[20
 		
 }
 
+Matriz_Resolucao(int matriz_resolucao[TAMANHO][TAMANHO]){
+        int i,j;
+        char c;
+        FILE *p;
+        p = fopen("resolucao.txt","r");
+        if(p == NULL){
+                printf("Erro ao abrir o arquivo");
+                exit(1);
+        }else{
+                for(i=0;i<TAMANHO;i++){
+                        for(j=0;j<TAMANHO;j++){
+                                c = fgetc(p);
+                                matriz_resolucao[i][j] = (int)(c - 48);
+                        }
+                }
+        }
+        fclose(p);
+}
+
 void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char informacao[45], int opcoes, char user[20]){
-        int i, j;
+        int i, j, matriz_resolucao[TAMANHO][TAMANHO];
+        char resolucao[81],c;
+        Matriz_Resolucao(matriz_resolucao);
         system("cls");
-		printf("\n\n\n\n");
+	printf("\n\n\n\n");
+        foreground(BLUE);
         printf("\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",201,205,205,205,205,205,205,205,205,205,205,205,203,205,205,205,205,205,205,205,205,205,205,205,203,205,205,205,205,205,205,205,205,205,205,205,187); 
-
+        style(RESETALL);
         for(i=0; i<TAMANHO; i++){
+                foreground(BLUE);
                 printf("\n\t%c ",186);                            // M: pimeiro elemento das linhas que tÃªm numeros
-
+                style(RESETALL);
                 for(j=0; j<TAMANHO; j++){
-                        if(i == atualy && j == atualx)          // M: Se a posicÃ£o atual for o local do quadradinho
-                                printf("%c ",219);              
+                        if(i == atualy && j == atualx){          // M: Se a posicÃ£o atual for o local do quadradinho
+                               foreground(YELLOW);
+                               if(m[i][j]!=0) printf("%c ",m[i][j]+48);
+                               else printf("%c ",219);
+                               style(RESETALL);     
+                        }         
                         else if(m[i][j] == 0)                   // M: Se a posiÃ§Ã£o estiver vazia (zero), mostra um espaÃ§o
                                 printf("%c ",32);               
-                        else
+                    /*     else if(m[i][j]==matriz_original[i][j]){
+                                foreground(BLUE);
                                 printf("%c ",m[i][j]+48);       // M: Se nÃ£o, mostra o nÃºmero
-
+                                style(RESETALL);
+                        } */
+                        else if(m[i][j]==matriz_resolucao[i][j]){
+                                foreground(RED);
+                                printf("%c ",m[i][j]+48);
+                                style(RESETALL);
+                        }else
+                                printf("%c ",m[i][j]+48);
+                                
+                        foreground(BLUE);
                         if(j == 2 || j == 5 || j == 8)                    // M: Aqui vai a "divisÃ£o vertical"
                                 printf("%c ",186);
                         else
                                 printf("%c ",179);
-                        
+                        style(RESETALL);
                 }
+
                 /*
                 if(opcoes == 0) quando as opÃ§oes se referem ao preenchimento da matriz original
                 if(opcoes == 1) quando as opÃ§oes se referem ao preenchimento da matriz de jogo
@@ -684,16 +723,25 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
                     printf("\tOBS: SE ISSO ACONTECER ^^ E O SUDOKU ESTIVER COMPLETO, SAI DO LACO WHILE");
                 if(i ==7)
                     printf("\t\t%s",informacao);       //M: Vai digitar alguma informaÃ§Ã£o especial
-                if(i == 2 || i == 5)                            // M: Ao final da 3Â° linha e da 5Â°, irÃ¡ mostar esta linha "divisÃ£o horizontal"
+                
+                if(i == 2 || i == 5){ 
+                        foreground(BLUE);                           // M: Ao final da 3Â° linha e da 5Â°, irÃ¡ mostar esta linha "divisÃ£o horizontal"
                         printf("\n\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",204,205,205,205,205,205,205,205,205,205,205,205,206,205,205,205,205,205,205,205,205,205,205,205,206,205,205,205,205,205,205,205,205,205,205,205,185);
-                else if(i != 8)
+                        style(RESETALL);
+                }else if(i != 8){
+                        foreground(BLUE);
                         printf("\n\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",186,196,196,196,197,196,196,196,197,196,196,196,186,196,196,196,197,196,196,196,197,196,196,196,186,196,196,196,197,196,196,196,197,196,196,196,186);              
+                style(RESETALL);
         }
-
+        }
+        foreground(BLUE);
         printf("\n\t%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",200,205,205,205,205,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,205,205,205,205,202,205,205,205,205,205,205,205,205,205,205,205,188); 
         printf("\n\n\n\t\t\t\t\t\t\t\t\t\t\t%c",201);
         printf("\n\t\t\t\t\t\t\t\t\t\t\t%c  %c %s    ",186,(atualx == 9 && atualy == 3)?175:32,user);
         printf("\n\t\t\t\t\t\t\t\t\t\t\t%c\n",200);
+        style(RESETALL);
+
+
 }
 
 void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45], int opcoes, char user[20], int escolha){             
