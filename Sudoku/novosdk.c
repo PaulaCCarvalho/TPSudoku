@@ -469,7 +469,7 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                         if((strcmp(userArq,user))==0){
                                 printf("\nUsuario ja cadastrado!");
                                 Sleep(1000);
-        						strcpy(user,"Login / Sair       ");
+        			strcpy(user,"Login / Sair       ");
                                 Tela_inicial(matriz_original,matriz_final,user);
                         }
                 }
@@ -484,6 +484,14 @@ void Tela_cadastro(int matriz_original[9][9], int matriz_final[9][9], char user[
                 }
                 fwrite(confirmar,sizeof(char),20,p);
                 
+                fclose(p);
+                strcpy(userArq, user);
+                strcat(userArq,".txt"); 
+                p = fopen(userArq, "w");
+                if(p == NULL){
+                        printf("Erro ao abrir o arquivo");
+                        exit(1);
+                }
                 fclose(p);
 		Tela_inicial(matriz_original, matriz_final,user);
 	}else{
@@ -603,8 +611,10 @@ void Imprime_tabuleiro(int m[TAMANHO][TAMANHO], int atualx, int atualy, char inf
 }
 
 void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], char informacao[45], int opcoes, char user[20], int escolha){             
-        int atualx = 0, atualy = 0, selecaolateral = 0, tempo;
+        int atualx = 0, atualy = 0, selecaolateral = 0, tempo, i, j, x = 0;
         unsigned char tecla;
+        FILE *p;
+        char userArq[50], v;
         clock_t tempo_gasto;
         Informacao_vazia(informacao);
         tempo_gasto = clock();
@@ -649,16 +659,160 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
         }
 
         if((atualx == 9 && selecaolateral == 2 && tecla == 13)){
+                if(opcoes == 0){
+                        if(strcmp(user, "Login / Sair       ") == 0){
+                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
+                                Sleep(1000);
+                                Zerar_matriz(m);
+                                Zerar_matriz(m_teste);
+                                Tela_inicial(m, m_teste, user);
+                                break;
+                        }
+                        strcpy(userArq, user);
+                        strcat(userArq, ".txt");
+                        p = fopen(userArq,"w");
+                        if(p == NULL){
+                                printf("Erro ao abrir o arquivo!");
+                                exit(1);
+                        }
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m_teste[i][j] + 48; 
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);     
+                                }
+                        }
+                        fputc('\n',p);
+                        fflush(p);
+                        x = 0;
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m[i][j] + 48;
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);         
+                                }
+                        }
+                        fputc('\n', p);
+                        fflush(p);
+                        fclose(p);               
+                }else{
+                        if(strcmp(user, "Login / Sair       ") == 0){
+                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
+                                Sleep(1000);
+                                Zerar_matriz(m);
+                                Zerar_matriz(m_teste);
+                                Tela_inicial(m, m_teste, user);
+                                break;
+                        }
+                        strcpy(userArq, user);
+                        strcat(userArq, ".txt");
+                        p = fopen(userArq,"w");
+                        if(p == NULL){
+                                printf("Erro ao abrir o arquivo!");
+                                exit(1);
+                        }
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m[i][j] + 48; 
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);        
+                                }
+                        }
+                        fputc('\n',p);
+                        fflush(p); 
+                        x = 0;
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m_teste[i][j] + 48;   
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);      
+                                }
+                        }
+                        fputc('\n', p);
+                        fflush(p);
+                        fclose(p);               
+                }
                 Zerar_matriz(m);
                 Zerar_matriz(m_teste);
-                if(opcoes == 1)
+                if(opcoes == 0)
                         Tela_inicial(m_teste,m, user);
                 else
                         Tela_inicial(m, m_teste, user);
         }
 
-        if((atualx == 9 && selecaolateral == 1 && tecla == 13) || (tecla == 102))
+        if((atualx == 9 && selecaolateral == 1 && tecla == 13) || (tecla == 102)){
+                if(opcoes == 0){
+                        if(strcmp(user, "Login / Sair       ") == 0){
+                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
+                                Sleep(1000);
+                                break;
+                        }
+                        strcpy(userArq, user);
+                        strcat(userArq, ".txt");
+                        p = fopen(userArq,"w");
+                        if(p == NULL){
+                                printf("Erro ao abrir o arquivo!");
+                                exit(1);
+                        }
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m_teste[i][j] + 48; 
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);     
+                                }
+                        }
+                        fputc('\n',p);
+                        fflush(p);
+                        x = 0;
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m[i][j] + 48;
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);         
+                                }
+                        }
+                        fputc('\n', p);
+                        fflush(p);
+                        fclose(p);               
+                }else{
+                        if(strcmp(user, "Login / Sair       ") == 0){
+                                printf("Jogo n%co salvo pois o usuario n%co esta cadastrado\n", 198, 198);
+                                Sleep(1000);
+                                Zerar_matriz(m);
+                                Zerar_matriz(m_teste);
+                                Tela_inicial(m, m_teste, user);
+                                break;
+                        }
+                        strcpy(userArq, user);
+                        strcat(userArq, ".txt");
+                        p = fopen(userArq,"w");
+                        if(p == NULL){
+                                printf("Erro ao abrir o arquivo!");
+                                exit(1);
+                        }
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m[i][j] + 48; 
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);        
+                                }
+                        }
+                        fputc('\n',p);
+                        fflush(p); 
+                        x = 0;
+                        for(i=0;i<TAMANHO;i++){
+                                for(j=0;j<TAMANHO;j++,x++){
+                                        v = m_teste[i][j] + 48;   
+                                        fprintf(p,"%c",v);  
+                                        fflush(p);      
+                                }
+                        }
+                        fputc('\n', p);
+                        fflush(p);
+                        fclose(p);               
+                }
                 break;
+        }
                 
         if(atualx == -1) atualx=9;       // M: Quando o elemento selecionado passa do limite (linha ou coluna), ele "faz a volta"
         if(atualx == 10)  atualx=0;
@@ -678,6 +832,39 @@ void Preencher_matriz(int m[TAMANHO][TAMANHO], int m_teste[TAMANHO][TAMANHO], ch
     }
     /*if (tecla==13)
         printf("Jogo pausado");              M: Talvez dê para inventar coisa aqui tipo isso ;)*/
+}
+
+void Continua_jogo(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO],char user[20]){
+        FILE *p;
+        int i, x = 0, j;
+        char userArq[30], vetor[81], informacao[45];
+        Informacao_vazia(informacao);
+        if(strcmp(user,"Login / Sair       ") == 0){
+                printf("Fa%ca o Login ou Cadastre-se\n", 135);
+                Sleep(1000);
+                Tela_entrar(matriz_original, matriz_final, user);
+        }
+        setbuf(stdin, NULL);
+        strcpy(userArq, user);
+        setbuf(stdin, NULL);
+        strcat(userArq, ".txt");
+        p = fopen(userArq, "r");
+        if(p == NULL){
+                printf("Errinho...\n");
+                exit(1);
+        }
+        fgets(vetor, 81, p);
+        for(i=0; i<TAMANHO; i++)
+                for(j=0; j<TAMANHO; j++,x++)
+                        matriz_original[i][j] = vetor[x] - 48; 
+                
+        x = 0;
+        fgets(vetor, 81, p);
+        for(i=0; i<TAMANHO; i++)
+                for(j=0; j<TAMANHO; j++,x++)
+                        matriz_final[i][j] = vetor[x] - 48;
+        fclose(p);
+        Preencher_matriz(matriz_original, matriz_final, informacao,0,user,5);
 }
 
 void Meu_sudoku(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANHO][TAMANHO], char user[20]){  // M: Para o usuario digitar seu sudoku
@@ -940,7 +1127,7 @@ void Imprime_inicio(int escolha, char user[20]){
         printf("%c\t\t\t\t\t\t\t%c\n%c    Sudoku\t\t\t\t\t\t%c\n",186,186,186,186);
         printf( "%c    %c Carregar um jogo aleat%crio.\t\t\t%c \n"
                 "%c    %c Carregar um jogo previamente definido.\t\t%c \n"
-                "%c    %c Nova opcao pro Diego Aqui.\t\t\t%c \n"
+                "%c    %c Continuar jogo.\t\t\t\t\t%c \n"
                 "%c    %c Ranking\t\t\t\t\t\t%c\n",186,(escolha==1)?175:32,162,186,186,(escolha==2)?175:32,186,186,(escolha==3)?175:32,186,186,(escolha==4)?175:32,186);
         printf("%c    %c Sair\t\t\t\t\t\t%c\n",186,(escolha==5)?175:32,186);
         printf( "%c%c%c%c%c%c%c%c%c%c"
@@ -983,7 +1170,7 @@ void Tela_inicial(int matriz_original[TAMANHO][TAMANHO], int matriz_final[TAMANH
         }else if(escolha == 2){                  
                 Meu_sudoku(matriz_original, matriz_final, user); // M: estava->telaDeBoasVindas(matriz_original,matriz_final);
         }else if(escolha == 3){ 
-                printf("P/ Diego: Coloque as coisas da nova opcao aqui\n"); 
+                Continua_jogo(matriz_original, matriz_final, user); 
         }else if(escolha == 4){
                 Ranking(matriz_original, matriz_final,user);
         }else if(escolha == 5){
